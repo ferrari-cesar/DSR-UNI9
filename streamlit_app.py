@@ -67,4 +67,13 @@ if st.button('Enviar'):
     chart = base + hline + vline + labels
 
     st.altair_chart(chart, use_container_width=True)
-    st.write("Obrigado pela sua utilização dessa ferramenta!")
+
+    st.write("Obrigado por preencher o questionário! Abaixo estão as definições de cada quadrante:")
+    st.write("""
+    - **Estrategistas Experientes**: Líderes que combinam alta experiência e alta liderança transformadora.
+    - **Profissionais em Ascensão**: Líderes com alta liderança transformadora, mas ainda em fase de acumulação de experiência.
+    - **Veteranos Eficazes**: Líderes com muita experiência, mas com oportunidades de desenvolvimento em liderança transformadora.
+    - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
+    """)
+
+    st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://www.example.com)")
