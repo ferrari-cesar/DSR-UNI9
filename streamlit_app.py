@@ -2,6 +2,14 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
+@st.cache
+def load_quadrant_labels():
+    return pd.DataFrame({
+        'A': [7.5, 2.5, 7.5, 2.5],
+        'B': [7.5, 7.5, 2.5, 2.5],
+        'label': ['Estrategistas Experientes', 'Profissionais em Ascensão', 'Veteranos Eficazes', 'Novos Visionários']
+    })
+
 idade_options = ['até 20 anos', '20-30 anos', '30-40 anos', '40-50 anos', '50-60 anos', 'mais de 60 anos']
 experiencia_options = ['até 5 anos', '5-10 anos', '10-20 anos', '20-30 anos', 'mais de 30 anos']
 
@@ -41,11 +49,7 @@ if st.button('Enviar'):
 
     data = pd.DataFrame({'A': [A], 'B': [B]})
 
-    quadrant_labels = pd.DataFrame({
-        'A': [7.5, 2.5, 7.5, 2.5],
-        'B': [7.5, 7.5, 2.5, 2.5],
-        'label': ['Estrategistas Experientes', 'Profissionais em Ascensão', 'Veteranos Eficazes', 'Novos Visionários']
-    })
+    quadrant_labels = load_quadrant_labels()
 
     base = alt.Chart(data).mark_point(filled=True, size=100).encode(
         x=alt.X('B:Q', scale=alt.Scale(domain=[0, 10]), title='Liderança Transformadora (LTM)'),
