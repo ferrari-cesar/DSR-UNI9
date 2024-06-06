@@ -1,8 +1,3 @@
-from pyngrok import ngrok
-import subprocess
-
-# Adicione o código adaptado acima aqui
-code = """
 import streamlit as st
 import pandas as pd
 import altair as alt
@@ -73,15 +68,3 @@ if st.button('Enviar'):
 
     st.altair_chart(chart, use_container_width=True)
     st.write("Obrigado pela sua utilização dessa ferramenta!")
-"""
-
-with open('app.py', 'w') as f:
-    f.write(code)
-
-# Inicie o Streamlit em segundo plano
-command = ["streamlit", "run", "app.py"]
-process = subprocess.Popen(command)
-
-# Crie um túnel ngrok para a porta 8501
-public_url = ngrok.connect(port='8501')
-print(f"Streamlit app is live at {public_url}")
