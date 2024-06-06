@@ -3,3 +3,4 @@ ipython==8.4.0
 altair==4.2.0
 pandas==1.4.2
 streamlit==1.10.0
+pyngrok==5.1.0
