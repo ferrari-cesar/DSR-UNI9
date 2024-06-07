@@ -112,8 +112,6 @@ if st.button('Enviar'):
     - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
     """)
 
-    st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://www.example.com)")
-
     # Use st.form to manage the state of the form
     with st.form("feedback_form"):
         st.write("Responda as seguintes perguntas sobre sua experiência:")
