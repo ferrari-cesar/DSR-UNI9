@@ -3,30 +3,42 @@ import pandas as pd
 import altair as alt
 import os
 from datetime import datetime
-import yagmail
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
 
 # Email configuration
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 DESTINATION_EMAIL = 'pesquisa.uni9.2024@gmail.com'  # Use a test email address
 
 def send_email(responses):
     try:
+        print("Setting up the server...")
         # Set up the server
-        yag = yagmail.SMTP(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        server = smtplib.SMTP(host=EMAIL_HOST, port=EMAIL_PORT)
+        server.starttls()
+        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         print("Server setup complete.")
+
+        # Create the email
+        print("Creating the email...")
+        msg = MIMEMultipart()
+        msg['From'] = EMAIL_ADDRESS
+        msg['To'] = DESTINATION_EMAIL
+        msg['Subject'] = "Survey Responses"
+        msg.attach(MIMEText(responses, 'plain'))
 
         # Send the email
         print("Sending the email...")
-        yag.send(
-            to=DESTINATION_EMAIL,
-            subject="Survey Responses",
-            contents=responses
-        )
+        server.send_message(msg)
+        server.quit()
         st.success("Responses sent via email successfully.")
         print("Email sent successfully.")
     except Exception as e:
@@ -111,6 +123,8 @@ if st.button('Enviar'):
     - **Veteranos Eficazes**: Líderes com muita experiência, mas com oportunidades de desenvolvimento em liderança transformadora.
     - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
     """)
+
+    st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://www.example.com)")
 
     # Use st.form to manage the state of the form
     with st.form("feedback_form"):
