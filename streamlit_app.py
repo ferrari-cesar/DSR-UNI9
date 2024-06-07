@@ -12,8 +12,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Email configuration
-EMAIL_ADDRESS =pesquisa.uni9.2024@gmail.com
-EMAIL_PASSWORD =yzdfkblyoirritz
+EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 DESTINATION_EMAIL = "ferrari_cesar@hotmail.com"
 
 def send_email(message):
@@ -43,28 +43,7 @@ def send_email(message):
         st.error(f"Failed to send email. Error: {e}")
         print(f"Failed to send email. Error: {e}")
 
-# Define the options for the dropdown menus
-idade_options = ['até 20 anos', '20-30 anos', '30-40 anos', '40-50 anos', '50-60 anos', 'mais de 60 anos']
-experiencia_options = ['até 5 anos', '5-10 anos', '10-20 anos', '20-30 anos', 'mais de 30 anos']
+st.title("Send Test Email")
 
-st.title("Pesquisa sobre Liderança Transformadora")
-
-# Collect user inputs
-idade = st.selectbox('Faixa Etária:', idade_options)
-experiencia = st.selectbox('Experiência:', experiencia_options)
-
-# Define the questions for the Likert scale
-questions = [
-    "Eu tenho uma compreensão clara de onde estamos indo",
-    "Eu sinto que a liderança me apoia",
-    # ... additional questions ...
-]
-
-responses = ""
-for i, question in enumerate(questions):
-    response = st.radio(question, ['Concordo totalmente', 'Concordo', 'Neutro', 'Discordo', 'Discordo totalmente'])
-    responses += f"{question}: {response}\n"
-
-if st.button('Enviar Respostas'):
-    # Here, instead of sending the responses, we send a "Hello World" message.
+if st.button('Send Hello World Email'):
     send_email("Hello World")
