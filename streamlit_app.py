@@ -103,8 +103,8 @@ if st.button('Enviar'):
         y='A:Q',
         text='label:N'
     )
-    hline = alt.Chart(pd.DataFrame({'y': [5]})).mark_rule(strokeDash([5,5], color='gray')).encode(y='y')
-    vline = alt.Chart(pd.DataFrame({'x': [5]})).mark_rule(strokeDash([5,5], color='gray')).encode(x='x')
+    hline = alt.Chart(pd.DataFrame({'y': [5]})).mark_rule(strokeDash=[5,5], color='gray').encode(y='y')
+    vline = alt.Chart(pd.DataFrame({'x': [5]})).mark_rule(strokeDash=[5,5], color='gray').encode(x='x')
 
     chart = base + hline + vline + labels
 
