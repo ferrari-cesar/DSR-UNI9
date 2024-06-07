@@ -12,8 +12,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Email configuration
-EMAIL_ADDRESS ="pesquisa.uni9.2024@gmail.com"
-EMAIL_PASSWORD ="yzdfkblyoirritz"
+EMAIL_ADDRESS =pesquisa.uni9.2024@gmail.com
+EMAIL_PASSWORD =yzdfkblyoirritz
 DESTINATION_EMAIL = "ferrari_cesar@hotmail.com"
 
 def send_email(message):
