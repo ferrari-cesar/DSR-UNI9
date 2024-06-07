@@ -118,17 +118,22 @@ if st.button('Enviar'):
     - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
     """)
 
-    st.write("Responda as seguintes perguntas sobre sua experiência:")
-    question1 = st.text_input("Pergunta 1: Como você avalia a facilidade de uso desta ferramenta?")
-    question2 = st.text_input("Pergunta 2: O que você mais gostou na ferramenta?")
-    question3 = st.text_input("Pergunta 3: O que você acha que poderia ser melhorado?")
-    question4 = st.text_input("Pergunta 4: Você recomendaria esta ferramenta a outros? Por quê?")
+    st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://www.example.com)")
 
-    if st.button('Enviar Respostas'):
-        responses = f"""
-        Pergunta 1: {question1}
-        Pergunta 2: {question2}
-        Pergunta 3: {question3}
-        Pergunta 4: {question4}
-        """
-        send_email(responses)
+    # Use st.form to manage the state of the form
+    with st.form("feedback_form"):
+        st.write("Responda as seguintes perguntas sobre sua experiência:")
+        question1 = st.text_input("Pergunta 1: Como você avalia a facilidade de uso desta ferramenta?")
+        question2 = st.text_input("Pergunta 2: O que você mais gostou na ferramenta?")
+        question3 = st.text_input("Pergunta 3: O que você acha que poderia ser melhorado?")
+        question4 = st.text_input("Pergunta 4: Você recomendaria esta ferramenta a outros? Por quê?")
+
+        submitted = st.form_submit_button("Enviar Respostas")
+        if submitted:
+            responses = f"""
+            Pergunta 1: {question1}
+            Pergunta 2: {question2}
+            Pergunta 3: {question3}
+            Pergunta 4: {question4}
+            """
+            send_email(responses)
