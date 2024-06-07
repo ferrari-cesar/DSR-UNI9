@@ -13,7 +13,7 @@ load_dotenv()
 
 # Email configuration
 EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
+EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 DESTINATION_EMAIL = 'pesquisa.uni9.2024@gmail.com'  # Use a test email address
