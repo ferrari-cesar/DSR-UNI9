@@ -3,41 +3,35 @@ import pandas as pd
 import altair as alt
 import os
 from datetime import datetime
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+import yagmail
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
 
 # Email configuration
-EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
-DESTINATION_EMAIL = 'ferrari_cesar@hotmail.com'  # Change this to your destination email address
+DESTINATION_EMAIL = 'ferrari_cesar@hotmail.com'  # Use a test email address
 
 def send_email(responses):
     try:
         # Set up the server
-        server = smtplib.SMTP(host=EMAIL_HOST, port=EMAIL_PORT)
-        server.starttls()
-        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-
-        # Create the email
-        msg = MIMEMultipart()
-        msg['From'] = EMAIL_ADDRESS
-        msg['To'] = DESTINATION_EMAIL
-        msg['Subject'] = "Survey Responses"
-        msg.attach(MIMEText(responses, 'plain'))
+        yag = yagmail.SMTP(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        print("Server setup complete.")
 
         # Send the email
-        server.send_message(msg)
-        server.quit()
+        print("Sending the email...")
+        yag.send(
+            to=DESTINATION_EMAIL,
+            subject="Survey Responses",
+            contents=responses
+        )
         st.success("Responses sent via email successfully.")
+        print("Email sent successfully.")
     except Exception as e:
         st.error(f"Failed to send email. Error: {e}")
+        print(f"Failed to send email. Error: {e}")
 
 # Define the options for the dropdown menus
 idade_options = ['até 20 anos', '20-30 anos', '30-40 anos', '40-50 anos', '50-60 anos', 'mais de 60 anos']
@@ -137,3 +131,4 @@ if st.button('Enviar'):
             Pergunta 4: {question4}
             """
             send_email(responses)
+            print("Form submitted. Responses:", responses)
