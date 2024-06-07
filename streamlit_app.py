@@ -6,14 +6,16 @@ from datetime import datetime
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
 # Load environment variables from .env file
-load_dotenv()
+#load_dotenv()
 
 # Email configuration
-EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
-EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+EMAIL_ADDRESS=pesquisa.uni9.2024@gmail.com
+EMAIL_PASSWORD=yzdfkblryoirritz
+#EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
+#EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 DESTINATION_EMAIL = 'ferrari_cesar@hotmail.com'  # Use a test email address
 
 def send_email(responses):
