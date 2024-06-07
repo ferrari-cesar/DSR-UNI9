@@ -3,40 +3,41 @@ import pandas as pd
 import altair as alt
 import os
 from datetime import datetime
-import requests
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
 
-# WebDAV configuration
-WEBDAV_URL = os.getenv('WEBDAV_URL')
-WEBDAV_USERNAME = os.getenv('WEBDAV_USERNAME')
-WEBDAV_PASSWORD = os.getenv('WEBDAV_PASSWORD')
+# Email configuration
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+DESTINATION_EMAIL = 'ferrari_cesar@hotmail.com'  # Change this to your destination email address
 
-def save_responses_to_onedrive(responses):
-    # Create a unique file name based on the current date and time
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    file_name = f"responses_{timestamp}.txt"
-    
-    # Prepare the file data
-    file_path = os.path.join("temp", file_name)
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    with open(file_path, "w") as f:
-        f.write(responses)
-    
-    # Upload the file to OneDrive using WebDAV
-    with open(file_path, "rb") as f:
-        response = requests.put(
-            WEBDAV_URL + file_name,
-            data=f,
-            auth=(WEBDAV_USERNAME, WEBDAV_PASSWORD)
-        )
-    
-    if response.status_code == 201:
-        st.success("Responses uploaded to OneDrive successfully.")
-    else:
-        st.error(f"Failed to upload responses. Status code: {response.status_code}")
+def send_email(responses):
+    try:
+        # Set up the server
+        server = smtplib.SMTP(host=EMAIL_HOST, port=EMAIL_PORT)
+        server.starttls()
+        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+
+        # Create the email
+        msg = MIMEMultipart()
+        msg['From'] = EMAIL_ADDRESS
+        msg['To'] = DESTINATION_EMAIL
+        msg['Subject'] = "Survey Responses"
+        msg.attach(MIMEText(responses, 'plain'))
+
+        # Send the email
+        server.send_message(msg)
+        server.quit()
+        st.success("Responses sent via email successfully.")
+    except Exception as e:
+        st.error(f"Failed to send email. Error: {e}")
 
 # Define the options for the dropdown menus
 idade_options = ['até 20 anos', '20-30 anos', '30-40 anos', '40-50 anos', '50-60 anos', 'mais de 60 anos']
@@ -102,8 +103,8 @@ if st.button('Enviar'):
         y='A:Q',
         text='label:N'
     )
-    hline = alt.Chart(pd.DataFrame({'y': [5]})).mark_rule(strokeDash=[5,5], color='gray').encode(y='y')
-    vline = alt.Chart(pd.DataFrame({'x': [5]})).mark_rule(strokeDash=[5,5], color='gray').encode(x='x')
+    hline = alt.Chart(pd.DataFrame({'y': [5]})).mark_rule(strokeDash([5,5], color='gray')).encode(y='y')
+    vline = alt.Chart(pd.DataFrame({'x': [5]})).mark_rule(strokeDash([5,5], color='gray')).encode(x='x')
 
     chart = base + hline + vline + labels
 
@@ -116,8 +117,6 @@ if st.button('Enviar'):
     - **Veteranos Eficazes**: Líderes com muita experiência, mas com oportunidades de desenvolvimento em liderança transformadora.
     - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
     """)
-
-    st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://www.example.com)")
 
     st.write("Responda as seguintes perguntas sobre sua experiência:")
     question1 = st.text_input("Pergunta 1: Como você avalia a facilidade de uso desta ferramenta?")
@@ -132,5 +131,4 @@ if st.button('Enviar'):
         Pergunta 3: {question3}
         Pergunta 4: {question4}
         """
-        save_responses_to_onedrive(responses)
-        st.success("Obrigado! Suas respostas foram salvas com sucesso.")
+        send_email(responses)
