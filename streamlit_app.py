@@ -12,7 +12,7 @@ from email.mime.text import MIMEText
 #load_dotenv()
 
 # Email configuration
-EMAIL_ADDRESS=pesquisa.uni9.2024@gmail.com
+EMAIL_ADDRESS='pesquisa.uni9.2024@gmail.com'
 EMAIL_PASSWORD=yzdfkblryoirritz
 #EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 #EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
