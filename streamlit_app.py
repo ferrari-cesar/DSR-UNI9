@@ -1,23 +1,54 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
+import os
+from datetime import datetime
+import requests
+from dotenv import load_dotenv
 
-@st.cache
-def load_quadrant_labels():
-    return pd.DataFrame({
-        'A': [7.5, 2.5, 7.5, 2.5],
-        'B': [7.5, 7.5, 2.5, 2.5],
-        'label': ['Estrategistas Experientes', 'Profissionais em Ascensão', 'Veteranos Eficazes', 'Novos Visionários']
-    })
+# Load environment variables from .env file
+load_dotenv()
 
+# WebDAV configuration
+WEBDAV_URL = os.getenv('WEBDAV_URL')
+WEBDAV_USERNAME = os.getenv('WEBDAV_USERNAME')
+WEBDAV_PASSWORD = os.getenv('WEBDAV_PASSWORD')
+
+def save_responses_to_onedrive(responses):
+    # Create a unique file name based on the current date and time
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_name = f"responses_{timestamp}.txt"
+    
+    # Prepare the file data
+    file_path = os.path.join("temp", file_name)
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    with open(file_path, "w") as f:
+        f.write(responses)
+    
+    # Upload the file to OneDrive using WebDAV
+    with open(file_path, "rb") as f:
+        response = requests.put(
+            WEBDAV_URL + file_name,
+            data=f,
+            auth=(WEBDAV_USERNAME, WEBDAV_PASSWORD)
+        )
+    
+    if response.status_code == 201:
+        st.success("Responses uploaded to OneDrive successfully.")
+    else:
+        st.error(f"Failed to upload responses. Status code: {response.status_code}")
+
+# Define the options for the dropdown menus
 idade_options = ['até 20 anos', '20-30 anos', '30-40 anos', '40-50 anos', '50-60 anos', 'mais de 60 anos']
 experiencia_options = ['até 5 anos', '5-10 anos', '10-20 anos', '20-30 anos', 'mais de 30 anos']
 
 st.title("Pesquisa sobre Liderança Transformadora")
 
+# Collect user inputs
 idade = st.selectbox('Faixa Etária:', idade_options)
 experiencia = st.selectbox('Experiência:', experiencia_options)
 
+# Define the questions for the Likert scale
 questions = [
     "Eu tenho uma compreensão clara de onde estamos indo",
     "Eu tenho uma noção clara de onde quer que nossa unidade estará em 5 anos",
@@ -36,11 +67,13 @@ questions = [
     "Eu elogio pessoalmente os membros da minha equipe quando fazem um trabalho"
 ]
 
+# Collect Likert scale responses
 likert_values = []
 for question in questions:
     value = st.slider(question, 1, 7, 4)
     likert_values.append(value)
 
+# Process and display the results
 if st.button('Enviar'):
     idade_value = idade_options.index(idade) + 1
     experiencia_value = experiencia_options.index(experiencia) + 1
@@ -49,7 +82,11 @@ if st.button('Enviar'):
 
     data = pd.DataFrame({'A': [A], 'B': [B]})
 
-    quadrant_labels = load_quadrant_labels()
+    quadrant_labels = pd.DataFrame({
+        'A': [7.5, 2.5, 7.5, 2.5],
+        'B': [7.5, 7.5, 2.5, 2.5],
+        'label': ['Estrategistas Experientes', 'Profissionais em Ascensão', 'Veteranos Eficazes', 'Novos Visionários']
+    })
 
     base = alt.Chart(data).mark_point(filled=True, size=100).encode(
         x=alt.X('B:Q', scale=alt.Scale(domain=[0, 10]), title='Liderança Transformadora (LTM)'),
@@ -80,4 +117,20 @@ if st.button('Enviar'):
     - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
     """)
 
-    st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://forms.gle/wtnhwGLY5i77ESUbA)")
+    st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://www.example.com)")
+
+    st.write("Responda as seguintes perguntas sobre sua experiência:")
+    question1 = st.text_input("Pergunta 1: Como você avalia a facilidade de uso desta ferramenta?")
+    question2 = st.text_input("Pergunta 2: O que você mais gostou na ferramenta?")
+    question3 = st.text_input("Pergunta 3: O que você acha que poderia ser melhorado?")
+    question4 = st.text_input("Pergunta 4: Você recomendaria esta ferramenta a outros? Por quê?")
+
+    if st.button('Enviar Respostas'):
+        responses = f"""
+        Pergunta 1: {question1}
+        Pergunta 2: {question2}
+        Pergunta 3: {question3}
+        Pergunta 4: {question4}
+        """
+        save_responses_to_onedrive(responses)
+        st.success("Obrigado! Suas respostas foram salvas com sucesso.")
