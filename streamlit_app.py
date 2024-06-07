@@ -16,7 +16,7 @@ EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
-DESTINATION_EMAIL = 'pesquisa.uni9.2024@gmail.com'  # Use a test email address
+DESTINATION_EMAIL = 'ferrari.cesar@gmail.com'  # Use a test email address
 
 def send_email(responses):
     try:
