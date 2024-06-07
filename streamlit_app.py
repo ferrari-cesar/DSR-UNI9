@@ -1,8 +1,5 @@
 import streamlit as st
-import pandas as pd
-import altair as alt
 import os
-from datetime import datetime
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -16,7 +13,15 @@ EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 DESTINATION_EMAIL = "ferrari_cesar@hotmail.com"
 
+# Print environment variables to diagnose
+print(f"EMAIL_ADDRESS: {EMAIL_ADDRESS}")
+print(f"EMAIL_PASSWORD: {EMAIL_PASSWORD}")
+
 def send_email(message):
+    if not EMAIL_ADDRESS or not EMAIL_PASSWORD:
+        st.error("Email address or password not set in environment variables.")
+        return
+
     try:
         print("Setting up the server...")
         # Set up the server
