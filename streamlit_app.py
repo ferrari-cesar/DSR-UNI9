@@ -14,7 +14,7 @@ load_dotenv()
 # Email configuration
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
-DESTINATION_EMAIL = 'ferrari_cesar@hotmail.com'  # Use a test email address
+DESTINATION_EMAIL = "ferrari_cesar@hotmail.com"  # Use a test email address
 
 def send_email(responses):
     try:
