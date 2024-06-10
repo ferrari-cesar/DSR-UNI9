@@ -63,7 +63,14 @@ experiencia = st.selectbox('Experiência:', experiencia_options)
 questions = [
     "Eu tenho uma compreensão clara de onde estamos indo",
     "Eu tenho uma noção clara de onde quer que nossa unidade se encaixe",
-    # Add back the rest of the questions here
+    "Eu tenho as ferramentas e recursos necessários para realizar o meu trabalho",
+    "Eu recebo feedback regular sobre o meu desempenho",
+    "Eu me sinto valorizado pelo meu trabalho",
+    "Eu confio na liderança da minha unidade",
+    "Eu entendo como o meu trabalho contribui para os objetivos da empresa",
+    "Eu sinto que há oportunidades de crescimento na empresa",
+    "Eu me sinto parte de uma equipe",
+    "Eu sinto que minha opinião é valorizada"
 ]
 
 # Collect responses
