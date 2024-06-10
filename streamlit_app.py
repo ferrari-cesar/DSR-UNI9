@@ -22,7 +22,7 @@ EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 DESTINATION_EMAIL = os.getenv('DESTINATION_EMAIL')  # Use a test email address
 
-def send_email(responses):
+def send_email(responses_html):
     try:
         print("Setting up the server...")
         # Set up the server
@@ -37,7 +37,7 @@ def send_email(responses):
         msg['From'] = EMAIL_ADDRESS
         msg['To'] = DESTINATION_EMAIL
         msg['Subject'] = "Survey Responses"
-        msg.attach(MIMEText(responses, 'plain'))
+        msg.attach(MIMEText(responses_html, 'html'))
 
         # Send the email
         print("Sending the email...")
@@ -152,8 +152,10 @@ with st.form("feedback_form"):
             "Pergunta 3": question3,
             "Pergunta 4": question4,
         }
-        responses_str = "\n".join([f"{k}: {v};" for k, v in all_responses.items()])
+
+        # Create HTML formatted string
+        responses_html = "<br>".join([f"{k}: {v};" for k, v in all_responses.items()])
 
         print("Sending email with responses...")
-        send_email(responses_str)
-        print("Form submitted. Responses:", responses_str)
+        send_email(responses_html)
+        print("Form submitted. Responses:", responses_html)
