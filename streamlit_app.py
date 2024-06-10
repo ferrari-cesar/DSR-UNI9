@@ -62,7 +62,8 @@ experiencia = st.selectbox('Experiência:', experiencia_options)
 # Define the questions for the Likert scale
 questions = [
     "Eu tenho uma compreensão clara de onde estamos indo",
-    "Eu tenho uma noção clara de onde quer que nossa unidade se encaixe"
+    "Eu tenho uma noção clara de onde quer que nossa unidade se encaixe",
+    # Add back the rest of the questions here
 ]
 
 # Collect responses
