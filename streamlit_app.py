@@ -52,6 +52,8 @@ if 'survey_started' not in st.session_state:
     st.session_state.survey_started = False
 if 'age_experience_submitted' not in st.session_state:
     st.session_state.age_experience_submitted = False
+if 'likert_questions_submitted' not in st.session_state:
+    st.session_state.likert_questions_submitted = False
 
 # Button to start the survey
 if not st.session_state.survey_started:
@@ -74,7 +76,7 @@ if st.session_state.survey_started:
             st.session_state.idade = idade
             st.session_state.experiencia = experiencia
 
-    if st.session_state.age_experience_submitted:
+    if st.session_state.age_experience_submitted and not st.session_state.likert_questions_submitted:
         # Collect Likert scale responses
         questions = [
             "Eu tenho uma compreensão clara de onde estamos indo",
@@ -146,6 +148,10 @@ if st.session_state.survey_started:
 
             st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://www.example.com)")
 
+            st.session_state.likert_questions_submitted = True
+            st.session_state.likert_values = likert_values
+
+    if st.session_state.likert_questions_submitted:
         # Use st.form to manage the state of the form
         with st.form("feedback_form"):
             st.write("Responda as seguintes perguntas sobre sua experiência:")
@@ -166,7 +172,7 @@ if st.session_state.survey_started:
                 all_responses = {
                     "Idade": st.session_state.idade,
                     "Experiência": st.session_state.experiencia,
-                    **{q: v for q, v in zip(questions, likert_values)},
+                    **{q: v for q, v in zip(questions, st.session_state.likert_values)},
                     **{q: v for q, v in feedback_values}
                 }
 
