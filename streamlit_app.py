@@ -134,23 +134,25 @@ if st.button('Enviar'):
 # Use st.form to manage the state of the form
 with st.form("feedback_form"):
     st.write("Responda as seguintes perguntas sobre sua experiência:")
-    question1 = st.slider("Pergunta 1: Como você avalia a facilidade de uso desta ferramenta?", 1, 7, 4)
-    question2 = st.slider("Pergunta 2: O que você mais gostou na ferramenta?", 1, 7, 4)
-    question3 = st.slider("Pergunta 3: O que você acha que poderia ser melhorado?", 1, 7, 4)
-    question4 = st.slider("Pergunta 4: Você recomendaria esta ferramenta a outros? Por quê?", 1, 7, 4)
+    question1 = st.slider("Como você avalia a facilidade de uso desta ferramenta?", 1, 7, 4)
+    question2 = st.slider("O que você mais gostou na ferramenta?", 1, 7, 4)
+    question3 = st.slider("O que você acha que poderia ser melhorado?", 1, 7, 4)
+    question4 = st.slider("Você recomendaria esta ferramenta a outros? Por quê?", 1, 7, 4)
 
     submitted = st.form_submit_button("Enviar Respostas")
     if submitted:
         st.write("Processing form submission...")
-        feedback_values = [question1, question2, question3, question4]
+        feedback_values = [
+            ("Como você avalia a facilidade de uso desta ferramenta?", question1),
+            ("O que você mais gostou na ferramenta?", question2),
+            ("O que você acha que poderia ser melhorado?", question3),
+            ("Você recomendaria esta ferramenta a outros? Por quê?", question4)
+        ]
         all_responses = {
             "Idade": idade,
             "Experiência": experiencia,
             **{q: v for q, v in zip(questions, likert_values)},
-            "Pergunta 1": question1,
-            "Pergunta 2": question2,
-            "Pergunta 3": question3,
-            "Pergunta 4": question4,
+            **{q: v for q, v in feedback_values}
         }
 
         # Create HTML formatted string with semi-colon after question and answer
