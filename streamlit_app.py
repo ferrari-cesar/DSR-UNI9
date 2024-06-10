@@ -152,7 +152,7 @@ with st.form("feedback_form"):
             "Pergunta 3": question3,
             "Pergunta 4": question4,
         }
-        responses_str = "\n".join([f"{k}: {v}" for k, v in all_responses.items()])
+        responses_str = "\n".join([f"{k}: {v};" for k, v in all_responses.items()])
 
         print("Sending email with responses...")
         send_email(responses_str)
