@@ -79,9 +79,24 @@ for question in questions:
     response = st.slider(question, 1, 5, 3)
     responses[question] = response
 
+# Convert responses to DataFrame for visualization
+df_responses = pd.DataFrame(list(responses.items()), columns=['Question', 'Response'])
+
 # Display collected responses
 st.write("Respostas coletadas:")
-st.write(responses)
+st.write(df_responses)
+
+# Data visualization
+st.write("Distribuição das Respostas")
+chart = alt.Chart(df_responses).mark_bar().encode(
+    x=alt.X('Response:Q', bin=True),
+    y='count()',
+    color='Question'
+).properties(
+    width=600,
+    height=400
+)
+st.altair_chart(chart)
 
 # When the user is ready to submit the responses
 if st.button('Enviar Respostas'):
