@@ -103,7 +103,7 @@ if st.session_state.survey_started:
             likert_values.append(value)
 
         # Process and display the results
-        if st.button('Enviar'):
+        if st.button('Computar'):
             st.write("Processing and displaying results...")
             idade_value = idade_options.index(st.session_state.idade) + 1
             experiencia_value = experiencia_options.index(st.session_state.experiencia) + 1
@@ -147,7 +147,7 @@ if st.session_state.survey_started:
             - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
             """)
 
-            st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://www.example.com)")
+    #        st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://www.example.com)")
 
             st.session_state.likert_questions_submitted = True
             st.session_state.likert_values = likert_values
