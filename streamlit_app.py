@@ -90,15 +90,16 @@ if st.session_state.survey_started:
     idade_options = ['até 20 anos', '20-30 anos', '30-40 anos', '40-50 anos', '50-60 anos', 'mais de 60 anos']
     experiencia_options = ['até 5 anos', '5-10 anos', '10-20 anos', '20-30 anos', 'mais de 30 anos']
 
+    age_experience_placeholder = st.empty()
     if not st.session_state.age_experience_submitted:
-        # Collect user inputs for age and experience
-        idade = st.selectbox('Faixa Etária:', idade_options)
-        experiencia = st.selectbox('Experiência:', experiencia_options)
-        
-        if st.button('Próximo'):
-            st.session_state.age_experience_submitted = True
-            st.session_state.idade = idade
-            st.session_state.experiencia = experiencia
+        with age_experience_placeholder.form(key='age_experience_form'):
+            idade = st.selectbox('Faixa Etária:', idade_options)
+            experiencia = st.selectbox('Experiência:', experiencia_options)
+            if st.form_submit_button('Próximo'):
+                st.session_state.age_experience_submitted = True
+                st.session_state.idade = idade
+                st.session_state.experiencia = experiencia
+                age_experience_placeholder.empty()
 
     if st.session_state.age_experience_submitted and not st.session_state.likert_questions_submitted:
         # Collect Likert scale responses
