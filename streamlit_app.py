@@ -45,8 +45,6 @@ def send_email(responses_html):
 
 # Display welcome message
 st.title("Pesquisa sobre Liderança Transformacional")
-welcome_placeholder = st.empty()
-welcome_placeholder.write("Bem-Vindo(a) a essa pesquisa sobre Liderança Transformacional - esperamos que o resultado dessa pesquisa seja útil para seu desenvolvimento como gestor!")
 
 # Initialize session state
 if 'survey_started' not in st.session_state:
@@ -55,6 +53,12 @@ if 'age_experience_submitted' not in st.session_state:
     st.session_state.age_experience_submitted = False
 if 'likert_questions_submitted' not in st.session_state:
     st.session_state.likert_questions_submitted = False
+
+# Show welcome message and start button if survey has not started
+if not st.session_state.survey_started:
+    st.write("Bem-Vindo(a) a essa pesquisa sobre Liderança Transformacional - esperamos que o resultado dessa pesquisa seja útil para seu desenvolvimento como gestor!")
+    if st.button('Iniciar'):
+        st.session_state.survey_started = True
 
 # Define the questions for the Likert scale
 questions = [
@@ -74,12 +78,6 @@ questions = [
     "Eu reconheço a melhora na qualidade do trabalho dos membros da minha equipe",
     "Eu elogio pessoalmente os membros da minha equipe quando fazem um trabalho"
 ]
-
-# Button to start the survey
-if not st.session_state.survey_started:
-    if st.button('Iniciar'):
-        st.session_state.survey_started = True
-        welcome_placeholder.empty()  # Clear the welcome message
 
 # Display the survey questions if the survey has started
 if st.session_state.survey_started:
