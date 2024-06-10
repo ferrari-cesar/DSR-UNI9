@@ -45,7 +45,8 @@ def send_email(responses_html):
 
 # Display welcome message
 st.title("Pesquisa sobre Liderança Transformacional")
-st.write("Bem-Vindo(a) a essa pesquisa sobre Liderança Transformacional - esperamos que o resultado dessa pesquisa seja útil para seu desenvolvimento como gestor!")
+welcome_placeholder = st.empty()
+welcome_placeholder.write("Bem-Vindo(a) a essa pesquisa sobre Liderança Transformacional - esperamos que o resultado dessa pesquisa seja útil para seu desenvolvimento como gestor!")
 
 # Initialize session state
 if 'survey_started' not in st.session_state:
@@ -78,6 +79,7 @@ questions = [
 if not st.session_state.survey_started:
     if st.button('Iniciar'):
         st.session_state.survey_started = True
+        welcome_placeholder.empty()  # Clear the welcome message
 
 # Display the survey questions if the survey has started
 if st.session_state.survey_started:
@@ -90,7 +92,7 @@ if st.session_state.survey_started:
         idade = st.selectbox('Faixa Etária:', idade_options)
         experiencia = st.selectbox('Experiência:', experiencia_options)
         
-        if st.button('Next'):
+        if st.button('Próximo'):
             st.session_state.age_experience_submitted = True
             st.session_state.idade = idade
             st.session_state.experiencia = experiencia
@@ -146,8 +148,6 @@ if st.session_state.survey_started:
             - **Veteranos Eficazes**: Líderes com muita experiência, mas com oportunidades de desenvolvimento em liderança transformadora.
             - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
             """)
-
-    #        st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://www.example.com)")
 
             st.session_state.likert_questions_submitted = True
             st.session_state.likert_values = likert_values
