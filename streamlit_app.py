@@ -103,59 +103,64 @@ if st.session_state.survey_started:
                 st.experimental_rerun()
 
     if st.session_state.age_experience_submitted and not st.session_state.likert_questions_submitted:
-        # Collect Likert scale responses
-        likert_values = []
-        for question in questions:
-            value = st.slider(question, 1, 7, 4)
-            likert_values.append(value)
+        likert_placeholder = st.empty()
+        with likert_placeholder.container():
+            # Collect Likert scale responses
+            likert_values = []
+            for question in questions:
+                value = st.slider(question, 1, 7, 4)
+                likert_values.append(value)
 
-        # Process and display the results
-        if st.button('Computar'):
-            st.write("Processing and displaying results...")
-            idade_value = idade_options.index(st.session_state.idade) + 1
-            experiencia_value = experiencia_options.index(st.session_state.experiencia) + 1
-            A = idade_value + experiencia_value
-            B = sum(likert_values) / len(likert_values)
+            # Process and display the results
+            if st.button('Computar'):
+                st.session_state.likert_values = likert_values
+                st.session_state.likert_questions_submitted = True
+                likert_placeholder.empty()
+                st.experimental_rerun()
 
-            data = pd.DataFrame({'A': [A], 'B': [B]})
+    if st.session_state.likert_questions_submitted:
+        st.write("Processing and displaying results...")
+        idade_value = idade_options.index(st.session_state.idade) + 1
+        experiencia_value = experiencia_options.index(st.session_state.experiencia) + 1
+        A = idade_value + experiencia_value
+        B = sum(st.session_state.likert_values) / len(st.session_state.likert_values)
 
-            quadrant_labels = pd.DataFrame({
-                'A': [7.5, 2.5, 7.5, 2.5],
-                'B': [7.5, 7.5, 2.5, 2.5],
-                'label': ['Estrategistas Experientes', 'Profissionais em Ascensão', 'Veteranos Eficazes', 'Novos Visionários']
-            })
+        data = pd.DataFrame({'A': [A], 'B': [B]})
 
-            base = alt.Chart(data).mark_point(filled=True, size=100).encode(
-                x=alt.X('B:Q', scale=alt.Scale(domain=[0, 10]), title='Liderança Transformadora (LTM)'),
-                y=alt.Y('A:Q', scale=alt.Scale(domain=[0, 10]), title='Experiência e Idade Combinadas')
-            )
-            labels = alt.Chart(quadrant_labels).mark_text(
-                align='center',
-                baseline='middle',
-                fontSize=12,
-                dy=-10
-            ).encode(
-                x='B:Q',
-                y='A:Q',
-                text='label:N'
-            )
-            hline = alt.Chart(pd.DataFrame({'y': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(y='y')
-            vline = alt.Chart(pd.DataFrame({'x': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(x='x')
+        quadrant_labels = pd.DataFrame({
+            'A': [7.5, 2.5, 7.5, 2.5],
+            'B': [7.5, 7.5, 2.5, 2.5],
+            'label': ['Estrategistas Experientes', 'Profissionais em Ascensão', 'Veteranos Eficazes', 'Novos Visionários']
+        })
 
-            chart = base + hline + vline + labels
+        base = alt.Chart(data).mark_point(filled=True, size=100).encode(
+            x=alt.X('B:Q', scale=alt.Scale(domain=[0, 10]), title='Liderança Transformadora (LTM)'),
+            y=alt.Y('A:Q', scale=alt.Scale(domain=[0, 10]), title='Experiência e Idade Combinadas')
+        )
+        labels = alt.Chart(quadrant_labels).mark_text(
+            align='center',
+            baseline='middle',
+            fontSize=12,
+            dy=-10
+        ).encode(
+            x='B:Q',
+            y='A:Q',
+            text='label:N'
+        )
+        hline = alt.Chart(pd.DataFrame({'y': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(y='y')
+        vline = alt.Chart(pd.DataFrame({'x': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(x='x')
 
-            st.altair_chart(chart, use_container_width=True)
+        chart = base + hline + vline + labels
 
-            st.write("Obrigado por preencher o questionário! Abaixo estão as definições de cada quadrante:")
-            st.write("""
-            - **Estrategistas Experientes**: Líderes que combinam alta experiência e alta liderança transformadora.
-            - **Profissionais em Ascensão**: Líderes com alta liderança transformadora, mas ainda em fase de acumulação de experiência.
-            - **Veteranos Eficazes**: Líderes com muita experiência, mas com oportunidades de desenvolvimento em liderança transformadora.
-            - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
-            """)
+        st.altair_chart(chart, use_container_width=True)
 
-            st.session_state.likert_questions_submitted = True
-            st.session_state.likert_values = likert_values
+        st.write("Obrigado por preencher o questionário! Abaixo estão as definições de cada quadrante:")
+        st.write("""
+        - **Estrategistas Experientes**: Líderes que combinam alta experiência e alta liderança transformadora.
+        - **Profissionais em Ascensão**: Líderes com alta liderança transformadora, mas ainda em fase de acumulação de experiência.
+        - **Veteranos Eficazes**: Líderes com muita experiência, mas com oportunidades de desenvolvimento em liderança transformadora.
+        - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
+        """)
 
     if st.session_state.likert_questions_submitted:
         # Use st.form to manage the state of the form
