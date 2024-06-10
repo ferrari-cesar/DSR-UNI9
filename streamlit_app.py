@@ -86,6 +86,7 @@ for question in questions:
 
 # Process and display the results
 if st.button('Enviar'):
+    st.write("Processing and displaying results...")
     idade_value = idade_options.index(idade) + 1
     experiencia_value = experiencia_options.index(experiencia) + 1
     A = idade_value + experiencia_value
@@ -130,27 +131,29 @@ if st.button('Enviar'):
 
     st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://www.example.com)")
 
-    # Use st.form to manage the state of the form
-    with st.form("feedback_form"):
-        st.write("Responda as seguintes perguntas sobre sua experiência:")
-        question1 = st.slider("Pergunta 1: Como você avalia a facilidade de uso desta ferramenta?", 1, 7, 4)
-        question2 = st.slider("Pergunta 2: O que você mais gostou na ferramenta?", 1, 7, 4)
-        question3 = st.slider("Pergunta 3: O que você acha que poderia ser melhorado?", 1, 7, 4)
-        question4 = st.slider("Pergunta 4: Você recomendaria esta ferramenta a outros? Por quê?", 1, 7, 4)
+# Use st.form to manage the state of the form
+with st.form("feedback_form"):
+    st.write("Responda as seguintes perguntas sobre sua experiência:")
+    question1 = st.slider("Pergunta 1: Como você avalia a facilidade de uso desta ferramenta?", 1, 7, 4)
+    question2 = st.slider("Pergunta 2: O que você mais gostou na ferramenta?", 1, 7, 4)
+    question3 = st.slider("Pergunta 3: O que você acha que poderia ser melhorado?", 1, 7, 4)
+    question4 = st.slider("Pergunta 4: Você recomendaria esta ferramenta a outros? Por quê?", 1, 7, 4)
 
-        submitted = st.form_submit_button("Enviar Respostas")
-        if submitted:
-            feedback_values = [question1, question2, question3, question4]
-            all_responses = {
-                "Idade": idade,
-                "Experiência": experiencia,
-                **{q: v for q, v in zip(questions, likert_values)},
-                "Pergunta 1": question1,
-                "Pergunta 2": question2,
-                "Pergunta 3": question3,
-                "Pergunta 4": question4,
-            }
-            responses_str = "\n".join([f"{k}: {v}" for k, v in all_responses.items()])
+    submitted = st.form_submit_button("Enviar Respostas")
+    if submitted:
+        st.write("Processing form submission...")
+        feedback_values = [question1, question2, question3, question4]
+        all_responses = {
+            "Idade": idade,
+            "Experiência": experiencia,
+            **{q: v for q, v in zip(questions, likert_values)},
+            "Pergunta 1": question1,
+            "Pergunta 2": question2,
+            "Pergunta 3": question3,
+            "Pergunta 4": question4,
+        }
+        responses_str = "\n".join([f"{k}: {v}" for k, v in all_responses.items()])
 
-            send_email(responses_str)
-            print("Form submitted. Responses:", responses_str)
+        print("Sending email with responses...")
+        send_email(responses_str)
+        print("Form submitted. Responses:", responses_str)
