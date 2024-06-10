@@ -37,7 +37,7 @@ def send_email(responses_html):
         print("Sending the email...")
         server.send_message(msg)
         server.quit()
-        st.success("Responses sent via email successfully.")
+        st.success("Avaliação da ferramenta enviada com sucesso - obrigado pela participação!")
         print("Email sent successfully.")
     except Exception as e:
         st.error(f"Failed to send email. Error: {e}")
