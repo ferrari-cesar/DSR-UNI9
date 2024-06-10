@@ -22,7 +22,7 @@ EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 DESTINATION_EMAIL = os.getenv('DESTINATION_EMAIL')  # Use a test email address
 
-def send_email(responses_csv):
+def send_email(responses):
     try:
         print("Setting up the server...")
         # Set up the server
@@ -37,7 +37,7 @@ def send_email(responses_csv):
         msg['From'] = EMAIL_ADDRESS
         msg['To'] = DESTINATION_EMAIL
         msg['Subject'] = "Survey Responses"
-        msg.attach(MIMEText(responses_csv, 'plain'))
+        msg.attach(MIMEText(responses, 'plain'))
 
         # Send the email
         print("Sending the email...")
@@ -85,7 +85,7 @@ for question in questions:
     likert_values.append(value)
 
 # Process and display the results
-if st.button('Computar'):
+if st.button('Enviar'):
     idade_value = idade_options.index(idade) + 1
     experiencia_value = experiencia_options.index(experiencia) + 1
     A = idade_value + experiencia_value
@@ -150,8 +150,7 @@ if st.button('Computar'):
                 "Pergunta 3": question3,
                 "Pergunta 4": question4,
             }
-            responses_df = pd.DataFrame(list(all_responses.items()), columns=['Question', 'Response'])
-            responses_csv = responses_df.to_csv(index=False)
+            responses_str = "\n".join([f"{k}: {v}" for k, v in all_responses.items()])
 
-            send_email(responses_csv)
-            print("Form submitted. Responses:", responses_csv)
+            send_email(responses_str)
+            print("Form submitted. Responses:", responses_str)
