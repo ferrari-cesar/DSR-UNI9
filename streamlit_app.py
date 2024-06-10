@@ -22,7 +22,7 @@ EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 DESTINATION_EMAIL = os.getenv('DESTINATION_EMAIL')  # Use a test email address
 
-def send_email(responses):
+def send_email(responses_csv):
     try:
         print("Setting up the server...")
         # Set up the server
@@ -37,7 +37,7 @@ def send_email(responses):
         msg['From'] = EMAIL_ADDRESS
         msg['To'] = DESTINATION_EMAIL
         msg['Subject'] = "Survey Responses"
-        msg.attach(MIMEText(responses, 'plain'))
+        msg.attach(MIMEText(responses_csv, 'plain'))
 
         # Send the email
         print("Sending the email...")
@@ -84,8 +84,8 @@ for question in questions:
     value = st.slider(question, 1, 7, 4)
     likert_values.append(value)
 
-# When the user is ready to submit the responses
-if st.button('Enviar'):
+# Process and display the results
+if st.button('Computar'):
     idade_value = idade_options.index(idade) + 1
     experiencia_value = experiencia_options.index(experiencia) + 1
     A = idade_value + experiencia_value
@@ -130,24 +130,28 @@ if st.button('Enviar'):
 
     st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://www.example.com)")
 
-    responses_str = f"Idade: {idade}\nExperiência: {experiencia}\n" + "\n".join([f"{q}: {v}" for q, v in zip(questions, likert_values)])
-    send_email(responses_str)
-
     # Use st.form to manage the state of the form
     with st.form("feedback_form"):
         st.write("Responda as seguintes perguntas sobre sua experiência:")
-        question1 = st.text_input("Pergunta 1: Como você avalia a facilidade de uso desta ferramenta?")
-        question2 = st.text_input("Pergunta 2: O que você mais gostou na ferramenta?")
-        question3 = st.text_input("Pergunta 3: O que você acha que poderia ser melhorado?")
-        question4 = st.text_input("Pergunta 4: Você recomendaria esta ferramenta a outros? Por quê?")
+        question1 = st.slider("Pergunta 1: Como você avalia a facilidade de uso desta ferramenta?", 1, 7, 4)
+        question2 = st.slider("Pergunta 2: O que você mais gostou na ferramenta?", 1, 7, 4)
+        question3 = st.slider("Pergunta 3: O que você acha que poderia ser melhorado?", 1, 7, 4)
+        question4 = st.slider("Pergunta 4: Você recomendaria esta ferramenta a outros? Por quê?", 1, 7, 4)
 
         submitted = st.form_submit_button("Enviar Respostas")
         if submitted:
-            feedback_responses = f"""
-            Pergunta 1: {question1}
-            Pergunta 2: {question2}
-            Pergunta 3: {question3}
-            Pergunta 4: {question4}
-            """
-            send_email(feedback_responses)
-            print("Form submitted. Responses:", feedback_responses)
+            feedback_values = [question1, question2, question3, question4]
+            all_responses = {
+                "Idade": idade,
+                "Experiência": experiencia,
+                **{q: v for q, v in zip(questions, likert_values)},
+                "Pergunta 1": question1,
+                "Pergunta 2": question2,
+                "Pergunta 3": question3,
+                "Pergunta 4": question4,
+            }
+            responses_df = pd.DataFrame(list(all_responses.items()), columns=['Question', 'Response'])
+            responses_csv = responses_df.to_csv(index=False)
+
+            send_email(responses_csv)
+            print("Form submitted. Responses:", responses_csv)
