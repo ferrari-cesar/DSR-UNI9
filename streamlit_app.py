@@ -154,7 +154,7 @@ with st.form("feedback_form"):
         }
 
         # Create HTML formatted string with semi-colon after question and answer
-        responses_html = "<br>".join([f"{k}: {v};" for k, v in all_responses.items()])
+        responses_html = "<br>".join([f"{k}:; {v};" for k, v in all_responses.items()])
 
         print("Sending email with responses...")
         send_email(responses_html)
