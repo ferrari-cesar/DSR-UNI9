@@ -91,8 +91,34 @@ if st.button('Enviar'):
     A = idade_value + experiencia_value
     B = sum(likert_values) / len(likert_values)
 
-    responses_str = f"Idade: {idade}\nExperiência: {experiencia}\n" + "\n".join([f"{q}: {v}" for q, v in zip(questions, likert_values)])
-    send_email(responses_str)
+    data = pd.DataFrame({'A': [A], 'B': [B]})
+
+    quadrant_labels = pd.DataFrame({
+        'A': [7.5, 2.5, 7.5, 2.5],
+        'B': [7.5, 7.5, 2.5, 2.5],
+        'label': ['Estrategistas Experientes', 'Profissionais em Ascensão', 'Veteranos Eficazes', 'Novos Visionários']
+    })
+
+    base = alt.Chart(data).mark_point(filled=True, size=100).encode(
+        x=alt.X('B:Q', scale=alt.Scale(domain=[0, 10]), title='Liderança Transformadora (LTM)'),
+        y=alt.Y('A:Q', scale=alt.Scale(domain=[0, 10]), title='Experiência e Idade Combinadas')
+    )
+    labels = alt.Chart(quadrant_labels).mark_text(
+        align='center',
+        baseline='middle',
+        fontSize=12,
+        dy=-10
+    ).encode(
+        x='B:Q',
+        y='A:Q',
+        text='label:N'
+    )
+    hline = alt.Chart(pd.DataFrame({'y': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(y='y')
+    vline = alt.Chart(pd.DataFrame({'x': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(x='x')
+
+    chart = base + hline + vline + labels
+
+    st.altair_chart(chart, use_container_width=True)
 
     st.write("Obrigado por preencher o questionário! Abaixo estão as definições de cada quadrante:")
     st.write("""
@@ -103,6 +129,9 @@ if st.button('Enviar'):
     """)
 
     st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://www.example.com)")
+
+    responses_str = f"Idade: {idade}\nExperiência: {experiencia}\n" + "\n".join([f"{q}: {v}" for q, v in zip(questions, likert_values)])
+    send_email(responses_str)
 
     # Use st.form to manage the state of the form
     with st.form("feedback_form"):
