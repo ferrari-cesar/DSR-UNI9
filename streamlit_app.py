@@ -49,11 +49,13 @@ def send_email(responses_html):
         st.error(f"Failed to send email. Error: {e}")
         print(f"Failed to send email. Error: {e}")
 
+# Display welcome message
+st.title("Pesquisa sobre Liderança Transformacional")
+st.write("Bem-Vindo(a) a essa pesquisa sobre Liderança Transformacional - esperamos que o resultado dessa pesquisa seja útil para seu desenvolvimento como gestor!")
+
 # Define the options for the dropdown menus
 idade_options = ['até 20 anos', '20-30 anos', '30-40 anos', '40-50 anos', '50-60 anos', 'mais de 60 anos']
 experiencia_options = ['até 5 anos', '5-10 anos', '10-20 anos', '20-30 anos', 'mais de 30 anos']
-
-st.title("Pesquisa sobre Liderança Transformadora")
 
 # Collect user inputs
 idade = st.selectbox('Faixa Etária:', idade_options)
