@@ -54,13 +54,16 @@ if 'age_experience_submitted' not in st.session_state:
 if 'likert_questions_submitted' not in st.session_state:
     st.session_state.likert_questions_submitted = False
 
-# Show welcome message and start button if survey has not started
-if not st.session_state.survey_started:
-    if st.button('Iniciar'):
-        st.session_state.survey_started = True
+# Create placeholders for the greeting message and the "Iniciar" button
+welcome_placeholder = st.empty()
+button_placeholder = st.empty()
 
 if not st.session_state.survey_started:
-    st.write("Bem-Vindo(a) a essa pesquisa sobre Liderança Transformacional - esperamos que o resultado dessa pesquisa seja útil para seu desenvolvimento como gestor!")
+    welcome_placeholder.write("Bem-Vindo(a) a essa pesquisa sobre Liderança Transformacional - esperamos que o resultado dessa pesquisa seja útil para seu desenvolvimento como gestor!")
+    if button_placeholder.button('Iniciar'):
+        st.session_state.survey_started = True
+        welcome_placeholder.empty()
+        button_placeholder.empty()
 
 # Define the questions for the Likert scale
 questions = [
