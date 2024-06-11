@@ -7,6 +7,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from dotenv import load_dotenv
+import uuid
 
 # Load environment variables from .env file
 load_dotenv()
@@ -16,7 +17,7 @@ EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 DESTINATION_EMAIL = os.getenv('DESTINATION_EMAIL')  # Use a test email address
 
-def send_email(responses_html):
+def send_email(responses_html, submission_id):
     try:
         print("Setting up the server...")
         # Set up the server
@@ -30,7 +31,7 @@ def send_email(responses_html):
         msg = MIMEMultipart()
         msg['From'] = EMAIL_ADDRESS
         msg['To'] = DESTINATION_EMAIL
-        msg['Subject'] = "Survey Responses"
+        msg['Subject'] = f"Survey Responses: Submission ID {submission_id}"
         msg.attach(MIMEText(responses_html, 'html'))
 
         # Send the email
@@ -85,6 +86,9 @@ questions = [
     "Eu reconheço a melhora na qualidade do trabalho dos membros da minha equipe",
     "Eu elogio pessoalmente os membros da minha equipe quando fazem um trabalho"
 ]
+
+# Generate a unique Submission ID
+submission_id = str(uuid.uuid4())
 
 # Display the survey questions if the survey has started
 if st.session_state.survey_started:
@@ -193,6 +197,7 @@ if st.session_state.survey_started:
         st.write("Processing form submission...")
         feedback_values = st.session_state.feedback_values
         all_responses = {
+            "Submission ID": submission_id,
             "Idade": st.session_state.idade,
             "Experiência": st.session_state.experiencia,
             **{q: v for q, v in zip(questions, st.session_state.likert_values)},
@@ -203,5 +208,5 @@ if st.session_state.survey_started:
         responses_html = "<br>".join([f"{k}:; {v};" for k, v in all_responses.items()])
 
         print("Sending email with responses...")
-        send_email(responses_html)
+        send_email(responses_html, submission_id)
         print("Form submitted. Responses:", responses_html)
