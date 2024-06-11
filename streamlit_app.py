@@ -116,6 +116,7 @@ if st.session_state.survey_started:
             for question in questions:
                 value = st.slider(question, 1, 7, 4)
                 likert_values.append(value)
+                st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
 
             submit_button = st.form_submit_button(label='Computar')
             if submit_button:
@@ -176,9 +177,15 @@ if st.session_state.survey_started:
         with st.form("feedback_form"):
             st.write("Responda as seguintes perguntas sobre sua experiência:")
             question1 = st.slider("Como você avalia a facilidade de uso desta ferramenta?", 1, 7, 4)
+            st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
             question2 = st.slider("O que você mais gostou na ferramenta?", 1, 7, 4)
+            st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
             question3 = st.slider("O que você acha que poderia ser melhorado?", 1, 7, 4)
+            st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
             question4 = st.slider("Você recomendaria esta ferramenta a outros? Por quê?", 1, 7, 4)
+            st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
+            question5 = st.slider("Quais sugestões você tem para melhorar esta ferramenta?", 1, 7, 4)
+            st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
 
             submitted = st.form_submit_button("Enviar Respostas")
             if submitted:
@@ -186,7 +193,8 @@ if st.session_state.survey_started:
                     ("Como você avalia a facilidade de uso desta ferramenta?", question1),
                     ("O que você mais gostou na ferramenta?", question2),
                     ("O que você acha que poderia ser melhorado?", question3),
-                    ("Você recomendaria esta ferramenta a outros? Por quê?", question4)
+                    ("Você recomendaria esta ferramenta a outros? Por quê?", question4),
+                    ("Quais sugestões você tem para melhorar esta ferramenta?", question5)
                 ]
                 st.session_state.feedback_submitted = True
                 st.experimental_rerun()
