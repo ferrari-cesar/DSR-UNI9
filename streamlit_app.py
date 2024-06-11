@@ -120,56 +120,55 @@ if st.session_state.survey_started:
                 likert_placeholder.empty()
                 st.experimental_rerun()
 
-    if st.session_state.likert_questions_submitted:
-        st.write("Processing and displaying results...")
-        idade_value = idade_options.index(st.session_state.idade) + 1
-        experiencia_value = experiencia_options.index(st.session_state.experiencia) + 1
-        A = idade_value + experiencia_value
-        B = sum(st.session_state.likert_values) / len(st.session_state.likert_values)
-
-        data = pd.DataFrame({'A': [A], 'B': [B]})
-
-        quadrant_labels = pd.DataFrame({
-            'A': [7.5, 2.5, 7.5, 2.5],
-            'B': [7.5, 7.5, 2.5, 2.5],
-            'label': ['Estrategistas Experientes', 'Profissionais em Ascensão', 'Veteranos Eficazes', 'Novos Visionários']
-        })
-
-        base = alt.Chart(data).mark_point(filled=True, size=100).encode(
-            x=alt.X('B:Q', scale=alt.Scale(domain=[0, 10]), title='Liderança Transformadora (LTM)'),
-            y=alt.Y('A:Q', scale=alt.Scale(domain=[0, 10]), title='Experiência e Idade Combinadas')
-        )
-        labels = alt.Chart(quadrant_labels).mark_text(
-            align='center',
-            baseline='middle',
-            fontSize=12,
-            dy=-10
-        ).encode(
-            x='B:Q',
-            y='A:Q',
-            text='label:N'
-        )
-        hline = alt.Chart(pd.DataFrame({'y': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(y='y')
-        vline = alt.Chart(pd.DataFrame({'x': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(x='x')
-
-        chart = base + hline + vline + labels
-
-        st.altair_chart(chart, use_container_width=True)
-
-        st.write("Obrigado por preencher o questionário! Abaixo estão as definições de cada quadrante:")
-        st.write("""
-        - **Estrategistas Experientes**: Líderes que combinam alta experiência e alta liderança transformadora.
-        - **Profissionais em Ascensão**: Líderes com alta liderança transformadora, mas ainda em fase de acumulação de experiência.
-        - **Veteranos Eficazes**: Líderes com muita experiência, mas com oportunidades de desenvolvimento em liderança transformadora.
-        - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
-        """)
-
-        # Add extra space before the evaluation questions
-        st.markdown("<br><br>", unsafe_allow_html=True)
-
     if st.session_state.likert_questions_submitted and not st.session_state.feedback_submitted:
-        feedback_placeholder = st.empty()
-        with feedback_placeholder.container():
+        result_placeholder = st.empty()
+        with result_placeholder.container():
+            st.write("Processing and displaying results...")
+            idade_value = idade_options.index(st.session_state.idade) + 1
+            experiencia_value = experiencia_options.index(st.session_state.experiencia) + 1
+            A = idade_value + experiencia_value
+            B = sum(st.session_state.likert_values) / len(st.session_state.likert_values)
+
+            data = pd.DataFrame({'A': [A], 'B': [B]})
+
+            quadrant_labels = pd.DataFrame({
+                'A': [7.5, 2.5, 7.5, 2.5],
+                'B': [7.5, 7.5, 2.5, 2.5],
+                'label': ['Estrategistas Experientes', 'Profissionais em Ascensão', 'Veteranos Eficazes', 'Novos Visionários']
+            })
+
+            base = alt.Chart(data).mark_point(filled=True, size=100).encode(
+                x=alt.X('B:Q', scale=alt.Scale(domain=[0, 10]), title='Liderança Transformadora (LTM)'),
+                y=alt.Y('A:Q', scale=alt.Scale(domain=[0, 10]), title='Experiência e Idade Combinadas')
+            )
+            labels = alt.Chart(quadrant_labels).mark_text(
+                align='center',
+                baseline='middle',
+                fontSize=12,
+                dy=-10
+            ).encode(
+                x='B:Q',
+                y='A:Q',
+                text='label:N'
+            )
+            hline = alt.Chart(pd.DataFrame({'y': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(y='y')
+            vline = alt.Chart(pd.DataFrame({'x': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(x='x')
+
+            chart = base + hline + vline + labels
+
+            st.altair_chart(chart, use_container_width=True)
+
+            st.write("Obrigado por preencher o questionário! Abaixo estão as definições de cada quadrante:")
+            st.write("""
+            - **Estrategistas Experientes**: Líderes que combinam alta experiência e alta liderança transformadora.
+            - **Profissionais em Ascensão**: Líderes com alta liderança transformadora, mas ainda em fase de acumulação de experiência.
+            - **Veteranos Eficazes**: Líderes com muita experiência, mas com oportunidades de desenvolvimento em liderança transformadora.
+            - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
+            """)
+
+            # Add extra space before the evaluation questions
+            st.markdown("<br><br>", unsafe_allow_html=True)
+
             # Use st.form to manage the state of the form
             with st.form("feedback_form"):
                 st.write("Responda as seguintes perguntas sobre sua experiência:")
@@ -187,7 +186,7 @@ if st.session_state.survey_started:
                         ("Você recomendaria esta ferramenta a outros? Por quê?", question4)
                     ]
                     st.session_state.feedback_submitted = True
-                    feedback_placeholder.empty()
+                    result_placeholder.empty()
                     st.experimental_rerun()
 
     if st.session_state.feedback_submitted:
