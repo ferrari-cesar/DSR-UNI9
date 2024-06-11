@@ -53,6 +53,8 @@ if 'age_experience_submitted' not in st.session_state:
     st.session_state.age_experience_submitted = False
 if 'likert_questions_submitted' not in st.session_state:
     st.session_state.likert_questions_submitted = False
+if 'feedback_submitted' not in st.session_state:
+    st.session_state.feedback_submitted = False
 
 # Create placeholders for the greeting message and the "Iniciar" button
 welcome_placeholder = st.empty()
@@ -165,34 +167,42 @@ if st.session_state.survey_started:
         # Add extra space before the evaluation questions
         st.markdown("<br><br>", unsafe_allow_html=True)
 
-    if st.session_state.likert_questions_submitted:
-        # Use st.form to manage the state of the form
-        with st.form("feedback_form"):
-            st.write("Responda as seguintes perguntas sobre sua experiência:")
-            question1 = st.slider("Como você avalia a facilidade de uso desta ferramenta?", 1, 7, 4)
-            question2 = st.slider("O que você mais gostou na ferramenta?", 1, 7, 4)
-            question3 = st.slider("O que você acha que poderia ser melhorado?", 1, 7, 4)
-            question4 = st.slider("Você recomendaria esta ferramenta a outros? Por quê?", 1, 7, 4)
+    if st.session_state.likert_questions_submitted and not st.session_state.feedback_submitted:
+        feedback_placeholder = st.empty()
+        with feedback_placeholder.container():
+            # Use st.form to manage the state of the form
+            with st.form("feedback_form"):
+                st.write("Responda as seguintes perguntas sobre sua experiência:")
+                question1 = st.slider("Como você avalia a facilidade de uso desta ferramenta?", 1, 7, 4)
+                question2 = st.slider("O que você mais gostou na ferramenta?", 1, 7, 4)
+                question3 = st.slider("O que você acha que poderia ser melhorado?", 1, 7, 4)
+                question4 = st.slider("Você recomendaria esta ferramenta a outros? Por quê?", 1, 7, 4)
 
-            submitted = st.form_submit_button("Enviar Respostas")
-            if submitted:
-                st.write("Processing form submission...")
-                feedback_values = [
-                    ("Como você avalia a facilidade de uso desta ferramenta?", question1),
-                    ("O que você mais gostou na ferramenta?", question2),
-                    ("O que você acha que poderia ser melhorado?", question3),
-                    ("Você recomendaria esta ferramenta a outros? Por quê?", question4)
-                ]
-                all_responses = {
-                    "Idade": st.session_state.idade,
-                    "Experiência": st.session_state.experiencia,
-                    **{q: v for q, v in zip(questions, st.session_state.likert_values)},
-                    **{q: v for q, v in feedback_values}
-                }
+                submitted = st.form_submit_button("Enviar Respostas")
+                if submitted:
+                    st.session_state.feedback_values = [
+                        ("Como você avalia a facilidade de uso desta ferramenta?", question1),
+                        ("O que você mais gostou na ferramenta?", question2),
+                        ("O que você acha que poderia ser melhorado?", question3),
+                        ("Você recomendaria esta ferramenta a outros? Por quê?", question4)
+                    ]
+                    st.session_state.feedback_submitted = True
+                    feedback_placeholder.empty()
+                    st.experimental_rerun()
 
-                # Create HTML formatted string with semi-colon after question and answer
-                responses_html = "<br>".join([f"{k}:; {v};" for k, v in all_responses.items()])
+    if st.session_state.feedback_submitted:
+        st.write("Processing form submission...")
+        feedback_values = st.session_state.feedback_values
+        all_responses = {
+            "Idade": st.session_state.idade,
+            "Experiência": st.session_state.experiencia,
+            **{q: v for q, v in zip(questions, st.session_state.likert_values)},
+            **{q: v for q, v in feedback_values}
+        }
 
-                print("Sending email with responses...")
-                send_email(responses_html)
-                print("Form submitted. Responses:", responses_html)
+        # Create HTML formatted string with semi-colon after question and answer
+        responses_html = "<br>".join([f"{k}:; {v};" for k, v in all_responses.items()])
+
+        print("Sending email with responses...")
+        send_email(responses_html)
+        print("Form submitted. Responses:", responses_html)
