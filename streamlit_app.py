@@ -175,7 +175,7 @@ if st.session_state.survey_started:
     if st.session_state.graph_displayed and not st.session_state.feedback_submitted:
         # Use st.form to manage the state of the form
         with st.form("feedback_form"):
-            st.write("Por favor, responda as seguintes perguntas sobre sua experiência usando essa ferramenta:")
+            st.write("Por favor, avalie as seguintes afirmações com respeito à sua experiência utilizando essa ferramenta:")
             question1 = st.slider("Achei fácil de utilizar a ferramenta", 1, 7, 4)
             st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
             question2 = st.slider("A ferramenta possibilitou avaliar o meu perfil de liderança transformacional", 1, 7, 4)
@@ -200,7 +200,7 @@ if st.session_state.survey_started:
                 st.experimental_rerun()
 
     if st.session_state.feedback_submitted:
-        st.write("Processing form submission...")
+        st.write("Processando o formulário...")
         feedback_values = st.session_state.feedback_values
         all_responses = {
             "Submission ID": submission_id,
