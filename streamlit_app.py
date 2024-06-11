@@ -45,7 +45,7 @@ def send_email(responses_html, submission_id):
         print(f"Failed to send email. Error: {e}")
 
 # Display welcome message
-st.title("Pesquisa sobre Liderança Transformacional")
+st.title("Auto-avaliação sobre Liderança Transformacional")
 
 # Initialize session state
 if 'survey_started' not in st.session_state:
@@ -64,7 +64,7 @@ welcome_placeholder = st.empty()
 button_placeholder = st.empty()
 
 if not st.session_state.survey_started:
-    welcome_placeholder.write("Bem-Vindo(a) a essa pesquisa sobre Liderança Transformacional - esperamos que o resultado dessa pesquisa seja útil para seu desenvolvimento como gestor!")
+    welcome_placeholder.write("Bem-Vindo(a) a essa ferramenta de auto-avaliação sobre Liderança Transformacional - esperamos que o resultado de sua aplicação seja útil para seu desenvolvimento como gestor!")
     if button_placeholder.button('Iniciar'):
         st.session_state.survey_started = True
         welcome_placeholder.empty()
