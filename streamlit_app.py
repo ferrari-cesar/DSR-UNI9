@@ -54,6 +54,8 @@ if 'age_experience_submitted' not in st.session_state:
     st.session_state.age_experience_submitted = False
 if 'likert_questions_submitted' not in st.session_state:
     st.session_state.likert_questions_submitted = False
+if 'graph_displayed' not in st.session_state:
+    st.session_state.graph_displayed = False
 if 'feedback_submitted' not in st.session_state:
     st.session_state.feedback_submitted = False
 
@@ -124,9 +126,10 @@ if st.session_state.survey_started:
                 st.session_state.likert_values = likert_values
                 st.session_state.likert_questions_submitted = True
                 likert_placeholder.empty()
+                st.session_state.graph_displayed = True
                 st.experimental_rerun()
 
-    if st.session_state.likert_questions_submitted and not st.session_state.feedback_submitted:
+    if st.session_state.graph_displayed and not st.session_state.feedback_submitted:
         result_placeholder = st.empty()
         with result_placeholder.container():
             st.write("Processing and displaying results...")
@@ -172,28 +175,30 @@ if st.session_state.survey_started:
             - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
             """)
 
-            # Add extra space before the evaluation questions
-            st.markdown("<br><br>", unsafe_allow_html=True)
+            if st.button('Próximo'):
+                st.session_state.graph_displayed = False
+                result_placeholder.empty()
+                st.experimental_rerun()
 
-            # Use st.form to manage the state of the form
-            with st.form("feedback_form"):
-                st.write("Responda as seguintes perguntas sobre sua experiência:")
-                question1 = st.slider("Como você avalia a facilidade de uso desta ferramenta?", 1, 7, 4)
-                question2 = st.slider("O que você mais gostou na ferramenta?", 1, 7, 4)
-                question3 = st.slider("O que você acha que poderia ser melhorado?", 1, 7, 4)
-                question4 = st.slider("Você recomendaria esta ferramenta a outros? Por quê?", 1, 7, 4)
+    if not st.session_state.graph_displayed and not st.session_state.feedback_submitted:
+        # Use st.form to manage the state of the form
+        with st.form("feedback_form"):
+            st.write("Responda as seguintes perguntas sobre sua experiência:")
+            question1 = st.slider("Como você avalia a facilidade de uso desta ferramenta?", 1, 7, 4)
+            question2 = st.slider("O que você mais gostou na ferramenta?", 1, 7, 4)
+            question3 = st.slider("O que você acha que poderia ser melhorado?", 1, 7, 4)
+            question4 = st.slider("Você recomendaria esta ferramenta a outros? Por quê?", 1, 7, 4)
 
-                submitted = st.form_submit_button("Enviar Respostas")
-                if submitted:
-                    st.session_state.feedback_values = [
-                        ("Como você avalia a facilidade de uso desta ferramenta?", question1),
-                        ("O que você mais gostou na ferramenta?", question2),
-                        ("O que você acha que poderia ser melhorado?", question3),
-                        ("Você recomendaria esta ferramenta a outros? Por quê?", question4)
-                    ]
-                    st.session_state.feedback_submitted = True
-                    result_placeholder.empty()
-                    st.experimental_rerun()
+            submitted = st.form_submit_button("Enviar Respostas")
+            if submitted:
+                st.session_state.feedback_values = [
+                    ("Como você avalia a facilidade de uso desta ferramenta?", question1),
+                    ("O que você mais gostou na ferramenta?", question2),
+                    ("O que você acha que poderia ser melhorado?", question3),
+                    ("Você recomendaria esta ferramenta a outros? Por quê?", question4)
+                ]
+                st.session_state.feedback_submitted = True
+                st.experimental_rerun()
 
     if st.session_state.feedback_submitted:
         st.write("Processing form submission...")
