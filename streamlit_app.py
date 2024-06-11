@@ -162,6 +162,9 @@ if st.session_state.survey_started:
         - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
         """)
 
+        # Add extra space before the evaluation questions
+        st.markdown("<br><br>", unsafe_allow_html=True)
+
     if st.session_state.likert_questions_submitted:
         # Use st.form to manage the state of the form
         with st.form("feedback_form"):
