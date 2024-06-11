@@ -98,10 +98,11 @@ if st.session_state.survey_started:
 
     age_experience_placeholder = st.empty()
     if not st.session_state.age_experience_submitted:
-        with age_experience_placeholder.container():
+        with age_experience_placeholder.form(key='age_experience_form'):
             idade = st.selectbox('Faixa Etária:', idade_options)
             experiencia = st.selectbox('Experiência:', experiencia_options)
-            if st.button('Próximo'):
+            submit_button = st.form_submit_button(label='Próximo')
+            if submit_button:
                 st.session_state.age_experience_submitted = True
                 st.session_state.idade = idade
                 st.session_state.experiencia = experiencia
@@ -110,7 +111,7 @@ if st.session_state.survey_started:
 
     if st.session_state.age_experience_submitted and not st.session_state.likert_questions_submitted:
         likert_placeholder = st.empty()
-        with likert_placeholder.container():
+        with likert_placeholder.form(key='likert_form'):
             # Collect Likert scale responses
             likert_values = []
             for question in questions:
@@ -118,12 +119,11 @@ if st.session_state.survey_started:
                 likert_values.append(value)
 
             # Process and display the results
-            if st.button('Computar'):
+            submit_button = st.form_submit_button(label='Computar')
+            if submit_button:
                 st.session_state.likert_values = likert_values
                 st.session_state.likert_questions_submitted = True
                 likert_placeholder.empty()
-                # Scroll to top using JavaScript
-                st.markdown('<script>window.scrollTo(0, 0);</script>', unsafe_allow_html=True)
                 st.experimental_rerun()
 
     if st.session_state.likert_questions_submitted and not st.session_state.feedback_submitted:
