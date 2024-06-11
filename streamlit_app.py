@@ -125,7 +125,7 @@ if st.session_state.survey_started:
                 st.experimental_rerun()
 
     if st.session_state.likert_questions_submitted and not st.session_state.graph_displayed:
-        st.write("Processing and displaying results...")
+        st.write("Processando e apresentando os resultados...")
         idade_value = idade_options.index(st.session_state.idade) + 1
         experiencia_value = experiencia_options.index(st.session_state.experiencia) + 1
         A = idade_value + experiencia_value
@@ -175,26 +175,26 @@ if st.session_state.survey_started:
     if st.session_state.graph_displayed and not st.session_state.feedback_submitted:
         # Use st.form to manage the state of the form
         with st.form("feedback_form"):
-            st.write("Responda as seguintes perguntas sobre sua experiência:")
-            question1 = st.slider("Como você avalia a facilidade de uso desta ferramenta?", 1, 7, 4)
+            st.write("Por favor, responda as seguintes perguntas sobre sua experiência usando essa ferramenta:")
+            question1 = st.slider("Achei fácil de utilizar a ferramenta", 1, 7, 4)
             st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
-            question2 = st.slider("O que você mais gostou na ferramenta?", 1, 7, 4)
+            question2 = st.slider("A ferramenta possibilitou avaliar o meu perfil de liderança transformacional", 1, 7, 4)
             st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
-            question3 = st.slider("O que você acha que poderia ser melhorado?", 1, 7, 4)
+            question3 = st.slider("Consegui compreender as questões apresentadas", 1, 7, 4)
             st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
-            question4 = st.slider("Você recomendaria esta ferramenta a outros? Por quê?", 1, 7, 4)
+            question4 = st.slider("As questões apresentadas estão relacionadas àquilo que acontece no dia-a-dia da minha organização", 1, 7, 4)
             st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
-            question5 = st.slider("Quais sugestões você tem para melhorar esta ferramenta?", 1, 7, 4)
+            question5 = st.slider("Acredito que os resultados da ferramenta podem impactar positivamente o ambiente da minha organização", 1, 7, 4)
             st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
 
             submitted = st.form_submit_button("Enviar Respostas")
             if submitted:
                 st.session_state.feedback_values = [
-                    ("Como você avalia a facilidade de uso desta ferramenta?", question1),
-                    ("O que você mais gostou na ferramenta?", question2),
-                    ("O que você acha que poderia ser melhorado?", question3),
-                    ("Você recomendaria esta ferramenta a outros? Por quê?", question4),
-                    ("Quais sugestões você tem para melhorar esta ferramenta?", question5)
+                    ("Achei fácil de utilizar a ferramenta", question1),
+                    ("A ferramenta possibilitou avaliar o meu perfil de liderança transformacional", question2),
+                    ("Consegui compreender as questões apresentadas", question3),
+                    ("As questões apresentadas estão relacionadas àquilo que acontece no dia-a-dia da minha organização", question4),
+                    ("Acredito que os resultados da ferramenta podem impactar positivamente o ambiente da minha organização", question5)
                 ]
                 st.session_state.feedback_submitted = True
                 st.experimental_rerun()
