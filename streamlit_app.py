@@ -123,8 +123,8 @@ if st.session_state.survey_started:
                 st.session_state.likert_questions_submitted = True
                 likert_placeholder.empty()
                 # Scroll to top using JavaScript
-                st.markdown("<script>window.scrollTo(0, 0);</script>", unsafe_allow_html=True)
-                st.rerun()
+                st.markdown('<script>window.scrollTo(0, 0);</script>', unsafe_allow_html=True)
+                st.experimental_rerun()
 
     if st.session_state.likert_questions_submitted and not st.session_state.feedback_submitted:
         result_placeholder = st.empty()
@@ -193,7 +193,7 @@ if st.session_state.survey_started:
                     ]
                     st.session_state.feedback_submitted = True
                     result_placeholder.empty()
-                    st.rerun()
+                    st.experimental_rerun()
 
     if st.session_state.feedback_submitted:
         st.write("Processing form submission...")
