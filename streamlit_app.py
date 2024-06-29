@@ -154,7 +154,7 @@ if st.session_state.survey_started:
             text='label:N'
         )
         hline = alt.Chart(pd.DataFrame({'y': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(y='y')
-        vline = alt.Chart(pd.DataFrame({'x': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(x='x')
+        vline = alt.Chart(pd.DataFrame({'x': [3.5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(x='x')
 
         chart = base + hline + vline + labels
 
