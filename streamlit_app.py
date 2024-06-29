@@ -7,7 +7,6 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from dotenv import load_dotenv
-import uuid
 
 # Load environment variables from .env file
 load_dotenv()
@@ -17,7 +16,7 @@ EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 DESTINATION_EMAIL = os.getenv('DESTINATION_EMAIL')  # Use a test email address
 
-def send_email(responses_html, submission_id):
+def send_email(responses_html):
     try:
         print("Setting up the server...")
         # Set up the server
@@ -31,21 +30,22 @@ def send_email(responses_html, submission_id):
         msg = MIMEMultipart()
         msg['From'] = EMAIL_ADDRESS
         msg['To'] = DESTINATION_EMAIL
-        msg['Subject'] = f"Survey Responses: Submission ID {submission_id}"
+        msg['Subject'] = "Survey Responses"
         msg.attach(MIMEText(responses_html, 'html'))
 
         # Send the email
         print("Sending the email...")
         server.send_message(msg)
         server.quit()
-        st.success("Avaliação da ferramenta enviada com sucesso - obrigado pela participação!")
+        st.success("Responses sent via email successfully.")
         print("Email sent successfully.")
     except Exception as e:
         st.error(f"Failed to send email. Error: {e}")
         print(f"Failed to send email. Error: {e}")
 
 # Display welcome message
-st.title("Auto-avaliação sobre Liderança Transformacional")
+st.title("Pesquisa sobre Liderança Transformacional")
+st.write("Bem-Vindo(a) a essa pesquisa sobre Liderança Transformacional - esperamos que o resultado dessa pesquisa seja útil para seu desenvolvimento como gestor!")
 
 # Initialize session state
 if 'survey_started' not in st.session_state:
@@ -54,21 +54,6 @@ if 'age_experience_submitted' not in st.session_state:
     st.session_state.age_experience_submitted = False
 if 'likert_questions_submitted' not in st.session_state:
     st.session_state.likert_questions_submitted = False
-if 'graph_displayed' not in st.session_state:
-    st.session_state.graph_displayed = False
-if 'feedback_submitted' not in st.session_state:
-    st.session_state.feedback_submitted = False
-
-# Create placeholders for the greeting message and the "Iniciar" button
-welcome_placeholder = st.empty()
-button_placeholder = st.empty()
-
-if not st.session_state.survey_started:
-    welcome_placeholder.write("Bem-Vindo(a) a essa ferramenta de auto-avaliação sobre Liderança Transformacional - esperamos que o resultado de sua aplicação seja útil para seu desenvolvimento como gestor!")
-    if button_placeholder.button('Iniciar'):
-        st.session_state.survey_started = True
-        welcome_placeholder.empty()
-        button_placeholder.empty()
 
 # Define the questions for the Likert scale
 questions = [
@@ -89,8 +74,10 @@ questions = [
     "Eu elogio pessoalmente os membros da minha equipe quando fazem um trabalho"
 ]
 
-# Generate a unique Submission ID
-submission_id = str(uuid.uuid4())
+# Button to start the survey
+if not st.session_state.survey_started:
+    if st.button('Iniciar'):
+        st.session_state.survey_started = True
 
 # Display the survey questions if the survey has started
 if st.session_state.survey_started:
@@ -99,120 +86,100 @@ if st.session_state.survey_started:
     experiencia_options = ['até 5 anos', '5-10 anos', '10-20 anos', '20-30 anos', 'mais de 30 anos']
 
     if not st.session_state.age_experience_submitted:
-        with st.form(key='age_experience_form'):
-            idade = st.selectbox('Faixa Etária:', idade_options)
-            experiencia = st.selectbox('Experiência:', experiencia_options)
-            submit_button = st.form_submit_button(label='Próximo')
-            if submit_button:
-                st.session_state.age_experience_submitted = True
-                st.session_state.idade = idade
-                st.session_state.experiencia = experiencia
-                st.experimental_rerun()
+        # Collect user inputs for age and experience
+        idade = st.selectbox('Faixa Etária:', idade_options)
+        experiencia = st.selectbox('Experiência:', experiencia_options)
+        
+        if st.button('Next'):
+            st.session_state.age_experience_submitted = True
+            st.session_state.idade = idade
+            st.session_state.experiencia = experiencia
 
     if st.session_state.age_experience_submitted and not st.session_state.likert_questions_submitted:
-        with st.form(key='likert_form'):
-            # Collect Likert scale responses
-            likert_values = []
-            for question in questions:
-                value = st.slider(question, 1, 7, 4)
-                likert_values.append(value)
-                st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
+        # Collect Likert scale responses
+        likert_values = []
+        for question in questions:
+            value = st.slider(question, 1, 7, 4)
+            likert_values.append(value)
 
-            submit_button = st.form_submit_button(label='Computar')
-            if submit_button:
-                st.session_state.likert_values = likert_values
-                st.session_state.likert_questions_submitted = True
-                st.experimental_rerun()
+        # Process and display the results
+        if st.button('Enviar'):
+            st.write("Processing and displaying results...")
+            idade_value = idade_options.index(st.session_state.idade) + 1
+            experiencia_value = experiencia_options.index(st.session_state.experiencia) + 1
+            A = idade_value + experiencia_value
+            B = sum(likert_values) / len(likert_values)
 
-    if st.session_state.likert_questions_submitted and not st.session_state.graph_displayed:
-        st.write("Processando e apresentando os resultados...")
-        idade_value = idade_options.index(st.session_state.idade) + 1
-        experiencia_value = experiencia_options.index(st.session_state.experiencia) + 1
-        A = idade_value + experiencia_value
-        B = sum(st.session_state.likert_values) / len(st.session_state.likert_values)
+            data = pd.DataFrame({'A': [A], 'B': [B]})
 
-        data = pd.DataFrame({'A': [A], 'B': [B]})
+            quadrant_labels = pd.DataFrame({
+                'A': [7.5, 2.5, 7.5, 2.5],
+                'B': [5.5, 5.5, 2.5, 2.5],
+                'label': ['Estrategistas Experientes', 'Profissionais em Ascensão', 'Veteranos Eficazes', 'Novos Visionários']
+            })
 
-        quadrant_labels = pd.DataFrame({
-            'A': [7.5, 2.5, 7.5, 2.5],
-            'B': [7.5, 7.5, 2.5, 2.5],
-            'label': ['Estrategistas Experientes', 'Profissionais em Ascensão', 'Veteranos Eficazes', 'Novos Visionários']
-        })
+            base = alt.Chart(data).mark_point(filled=True, size=100).encode(
+                x=alt.X('B:Q', scale=alt.Scale(domain=[0, 7]), title='Liderança Transformadora (LTM)'),
+                y=alt.Y('A:Q', scale=alt.Scale(domain=[0, 10]), title='Experiência e Idade Combinadas')
+            )
+            labels = alt.Chart(quadrant_labels).mark_text(
+                align='center',
+                baseline='middle',
+                fontSize=12,
+                dy=-10
+            ).encode(
+                x='B:Q',
+                y='A:Q',
+                text='label:N'
+            )
+            hline = alt.Chart(pd.DataFrame({'y': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(y='y')
+            vline = alt.Chart(pd.DataFrame({'x': [3.5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(x='x')
 
-        base = alt.Chart(data).mark_point(filled=True, size=100).encode(
-            x=alt.X('B:Q', scale=alt.Scale(domain=[0, 10]), title='Liderança Transformadora (LTM)'),
-            y=alt.Y('A:Q', scale=alt.Scale(domain=[0, 10]), title='Experiência e Idade Combinadas')
-        )
-        labels = alt.Chart(quadrant_labels).mark_text(
-            align='center',
-            baseline='middle',
-            fontSize=12,
-            dy=-10
-        ).encode(
-            x='B:Q',
-            y='A:Q',
-            text='label:N'
-        )
-        hline = alt.Chart(pd.DataFrame({'y': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(y='y')
-        vline = alt.Chart(pd.DataFrame({'x': [5]})).mark_rule(strokeDash=[5, 5], color='gray').encode(x='x')
+            chart = base + hline + vline + labels
 
-        chart = base + hline + vline + labels
+            st.altair_chart(chart, use_container_width=True)
 
-        st.altair_chart(chart, use_container_width=True)
+            st.write("Obrigado por preencher o questionário! Abaixo estão as definições de cada quadrante:")
+            st.write("""
+            - **Estrategistas Experientes**: Líderes que combinam alta experiência e alta liderança transformadora.
+            - **Profissionais em Ascensão**: Líderes com alta liderança transformadora, mas ainda em fase de acumulação de experiência.
+            - **Veteranos Eficazes**: Líderes com muita experiência, mas com oportunidades de desenvolvimento em liderança transformadora.
+            - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
+            """)
 
-        st.write("Obrigado por preencher o questionário! Abaixo estão as definições de cada quadrante:")
-        st.write("""
-        - **Estrategistas Experientes**: Líderes que combinam alta experiência e alta liderança transformadora.
-        - **Profissionais em Ascensão**: Líderes com alta liderança transformadora, mas ainda em fase de acumulação de experiência.
-        - **Veteranos Eficazes**: Líderes com muita experiência, mas com oportunidades de desenvolvimento em liderança transformadora.
-        - **Novos Visionários**: Líderes novos ou menos experientes que demonstram forte potencial em liderança transformadora.
-        """)
+            st.write("Por favor, deixe suas impressões sobre o uso desta ferramenta clicando no link a seguir para acessar a pesquisa de avaliação: [Pesquisa de Avaliação](https://www.example.com)")
 
-        if st.button('Próximo'):
-            st.session_state.graph_displayed = True
-            st.experimental_rerun()
+            st.session_state.likert_questions_submitted = True
+            st.session_state.likert_values = likert_values
 
-    if st.session_state.graph_displayed and not st.session_state.feedback_submitted:
+    if st.session_state.likert_questions_submitted:
         # Use st.form to manage the state of the form
         with st.form("feedback_form"):
-            st.write("Por favor, avalie as seguintes afirmações com respeito à sua experiência utilizando essa ferramenta:")
-            question1 = st.slider("Achei fácil de utilizar a ferramenta", 1, 7, 4)
-            st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
-            question2 = st.slider("A ferramenta possibilitou avaliar o meu perfil de liderança transformacional", 1, 7, 4)
-            st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
-            question3 = st.slider("Consegui compreender as questões apresentadas", 1, 7, 4)
-            st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
-            question4 = st.slider("As questões apresentadas estão relacionadas àquilo que acontece no dia-a-dia da minha organização", 1, 7, 4)
-            st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
-            question5 = st.slider("Acredito que os resultados da ferramenta podem impactar positivamente o ambiente da minha organização", 1, 7, 4)
-            st.markdown("<span style='float: left;'>Discordo totalmente</span><span style='float: right;'>Concordo totalmente</span>", unsafe_allow_html=True)
+            st.write("Responda as seguintes perguntas sobre sua experiência:")
+            question1 = st.slider("Como você avalia a facilidade de uso desta ferramenta?", 1, 7, 4)
+            question2 = st.slider("O que você mais gostou na ferramenta?", 1, 7, 4)
+            question3 = st.slider("O que você acha que poderia ser melhorado?", 1, 7, 4)
+            question4 = st.slider("Você recomendaria esta ferramenta a outros? Por quê?", 1, 7, 4)
 
             submitted = st.form_submit_button("Enviar Respostas")
             if submitted:
-                st.session_state.feedback_values = [
-                    ("Achei fácil de utilizar a ferramenta", question1),
-                    ("A ferramenta possibilitou avaliar o meu perfil de liderança transformacional", question2),
-                    ("Consegui compreender as questões apresentadas", question3),
-                    ("As questões apresentadas estão relacionadas àquilo que acontece no dia-a-dia da minha organização", question4),
-                    ("Acredito que os resultados da ferramenta podem impactar positivamente o ambiente da minha organização", question5)
+                st.write("Processing form submission...")
+                feedback_values = [
+                    ("Como você avalia a facilidade de uso desta ferramenta?", question1),
+                    ("O que você mais gostou na ferramenta?", question2),
+                    ("O que você acha que poderia ser melhorado?", question3),
+                    ("Você recomendaria esta ferramenta a outros? Por quê?", question4)
                 ]
-                st.session_state.feedback_submitted = True
-                st.experimental_rerun()
+                all_responses = {
+                    "Idade": st.session_state.idade,
+                    "Experiência": st.session_state.experiencia,
+                    **{q: v for q, v in zip(questions, st.session_state.likert_values)},
+                    **{q: v for q, v in feedback_values}
+                }
 
-    if st.session_state.feedback_submitted:
-        st.write("Processando o formulário...")
-        feedback_values = st.session_state.feedback_values
-        all_responses = {
-            "Submission ID": submission_id,
-            "Idade": st.session_state.idade,
-            "Experiência": st.session_state.experiencia,
-            **{q: v for q, v in zip(questions, st.session_state.likert_values)},
-            **{q: v for q, v in feedback_values}
-        }
+                # Create HTML formatted string with semi-colon after question and answer
+                responses_html = "<br>".join([f"{k}:; {v};" for k, v in all_responses.items()])
 
-        # Create HTML formatted string with semi-colon after question and answer
-        responses_html = f"Submission ID: {submission_id}<br>" + "<br>".join([f"{k}:; {v};" for k, v in all_responses.items()])
-
-        print("Sending email with responses...")
-        send_email(responses_html, submission_id)
-        print("Form submitted. Responses:", responses_html)
+                print("Sending email with responses...")
+                send_email(responses_html)
+                print("Form submitted. Responses:", responses_html)
