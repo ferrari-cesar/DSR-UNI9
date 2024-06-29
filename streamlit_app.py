@@ -140,7 +140,7 @@ if st.session_state.survey_started:
         })
 
         base = alt.Chart(data).mark_point(filled=True, size=100).encode(
-            x=alt.X('B:Q', scale=alt.Scale(domain=[0, 10]), title='Liderança Transformadora (LTM)'),
+            x=alt.X('B:Q', scale=alt.Scale(domain=[0, 7]), title='Liderança Transformadora (LTM)'),
             y=alt.Y('A:Q', scale=alt.Scale(domain=[0, 10]), title='Experiência e Idade Combinadas')
         )
         labels = alt.Chart(quadrant_labels).mark_text(
