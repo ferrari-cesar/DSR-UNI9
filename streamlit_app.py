@@ -135,7 +135,7 @@ if st.session_state.survey_started:
 
         quadrant_labels = pd.DataFrame({
             'A': [7.5, 2.5, 7.5, 2.5],
-            'B': [7.5, 7.5, 2.5, 2.5],
+            'B': [5.5, 5.5, 2.5, 2.5],
             'label': ['Estrategistas Experientes', 'Profissionais em Ascensão', 'Veteranos Eficazes', 'Novos Visionários']
         })
 
